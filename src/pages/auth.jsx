@@ -1,19 +1,31 @@
-import React from 'react'
+import React, { useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useSearchParams } from 'react-router-dom';
-import Login from '@/components/login';
-import SignUp from '@/components/ui/signup';
-
+import { useNavigate, useSearchParams } from "react-router-dom";
+import Login from "@/components/login";
+import SignUp from "@/components/signup";
+import { UrlState } from "@/context";
 
 const Auth = () => {
-  const [search]= useSearchParams();
+  const [searchParams] = useSearchParams();
+  const longlink = searchParams.get("createNew");
+  const navigate = useNavigate();
+
+  const { isAuthenticated, loading } = UrlState();
+
+  useEffect(() => {
+    if (isAuthenticated && !loading) {
+      const targetPath = longlink
+        ? `/dashboard?createNew=${longlink}`
+        : "/dashboard";
+      console.log("Navigating to:", targetPath);
+      navigate(targetPath);
+    }
+  }, [loading, isAuthenticated]);
 
   return (
-    <div className="mt-36 flex flex-col items-center gap-10">
+    <div className="mt-20 flex flex-col items-center gap-10">
       <h1 className="text-5xl font-extrabold">
-        {search.get("createNew")
-          ? "Hold Up lets Login First"
-          : "Login / Sign Up"}
+        {longlink ? "Hold Up lets Login First" : "Login / Sign Up"}
       </h1>
       <Tabs defaultValue="Login" className="w-[400px] ">
         <TabsList className="grid w-full grid-cols-2">
@@ -23,10 +35,12 @@ const Auth = () => {
         <TabsContent value="Login">
           <Login />
         </TabsContent>
-        <TabsContent value="Signup"><SignUp/></TabsContent>
+        <TabsContent value="Signup">
+          <SignUp />
+        </TabsContent>
       </Tabs>
     </div>
   );
-}
+};
 
-export default Auth
+export default Auth;

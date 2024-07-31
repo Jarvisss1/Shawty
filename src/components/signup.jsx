@@ -13,24 +13,26 @@ import * as Yup from "yup";
 import { Button } from "./ui/button";
 import { BeatLoader } from "react-spinners";
 import useFetch from "@/hooks/use-fetch";
-import { login } from "@/db/authApi";
+import { signUp } from "@/db/authApi";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { UrlState } from "@/context";
 
-const Login = () => {
+const SignUp = () => {
   const [errors, setErrors] = useState([]);
   const [input, setInput] = useState({
+    name:"",
     email: "",
     password: "",
+    profile_pic:null
   });
 
-  const { data, error, loading, fn: fnLogin } = useFetch(login, input);
+  const { data, error, loading, fn: fnSignUp } = useFetch(signUp, input);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   const longLink = searchParams.get("createNew");
 
-  const {fetchUser} = UrlState();
+  const { fetchUser } = UrlState();
 
   useEffect(() => {
     if (error == null && data) {
@@ -43,33 +45,35 @@ const Login = () => {
 
       fetchUser();
     }
-  }, [data, error]);
+  }, [loading, error]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value ,files} = e.target;
     setInput((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: files ? files[0] : value,
     }));
   };
 
-  const handleLogin = async (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
     setErrors([]);
 
     try {
       const schema = Yup.object().shape({
+        name: Yup.string().required("Name is required"),
         email: Yup.string()
           .email("Invalid email")
           .required("Email is required"),
         password: Yup.string()
           .min(6, "Password must be at least 6 characters")
           .required("Password is required"),
+        profile_pic: Yup.mixed().required("Profile pic is required"),
       });
 
       await schema.validate(input, { abortEarly: false });
 
-      await fnLogin();
+      await fnSignUp();
     } catch (error) {
       const newError = {};
       error?.inner?.forEach((err) => {
@@ -83,13 +87,21 @@ const Login = () => {
     <div>
       <Card>
         <CardHeader>
-          <CardTitle>Login</CardTitle>
-          <CardDescription>
-            to your account if you already have one
-          </CardDescription>
+          <CardTitle>Sign Up</CardTitle>
+          <CardDescription>if you are new here</CardDescription>
           {error && <Error message={error.message} />}
         </CardHeader>
         <CardContent className="space-y-2">
+          <div className="space-y-1">
+            <Input
+              name="name"
+              type="text"
+              placeholder="Name"
+              onChange={handleChange}
+            />
+            {errors.name && <Error message={errors.name} />}
+          </div>
+
           <div className="space-y-1">
             <Input
               name="email"
@@ -99,19 +111,31 @@ const Login = () => {
             />
             {errors.email && <Error message={errors.email} />}
           </div>
+
           <div className="space-y-1">
             <Input
               name="password"
               type="password"
-              placeholder="password"
+              placeholder="Password"
               onChange={handleChange}
             />
             {errors.password && <Error message={errors.password} />}
           </div>
+
+          <div className="space-y-1">
+            <Input
+              name="profile_pic"
+              type="file"
+              accept="image/*"
+              placeholder="Profile Pic"
+              onChange={handleChange}
+            />
+            {errors.profile_pic && <Error message={errors.profile_pic} />}
+          </div>
         </CardContent>
         <CardFooter>
-          <Button onClick={handleLogin}>
-            {loading ? <BeatLoader size={9} /> : "Login"}
+          <Button onClick={handleSignUp}>
+            {loading ? <BeatLoader size={9} color="#36d7b7" /> : "Create Account"}
           </Button>
         </CardFooter>
       </Card>
@@ -119,4 +143,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;
