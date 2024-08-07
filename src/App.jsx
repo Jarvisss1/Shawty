@@ -31,7 +31,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/link/:id",
-        element:<RequireAuth> <Link /></RequireAuth>,
+        element: (
+          <RequireAuth>
+            <Link />
+          </RequireAuth>
+        ),
       },
       {
         path: "/:id",

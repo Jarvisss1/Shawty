@@ -1,20 +1,20 @@
 import { createContext, useContext, useEffect } from "react";
-import useFetch from "./hooks/use-fetch";
 import { getCurrentUser } from "./db/authApi";
+import useFetch from "./hooks/use-fetch";
 
 const UrlContext = createContext();
 
 const UrlProvider = ({ children }) => {
   const { data: user, loading, fn: fetchUser } = useFetch(getCurrentUser);
 
-  const isAuthenticated = Boolean(user);
+  const isAuthenticated = user?.role === "authenticated";
 
   useEffect(() => {
     fetchUser();
-  }, [fetchUser]);
+  }, []);
 
   return (
-    <UrlContext.Provider value={{ user, loading, fetchUser, isAuthenticated }}>
+    <UrlContext.Provider value={{ user, fetchUser, loading, isAuthenticated }}>
       {children}
     </UrlContext.Provider>
   );
