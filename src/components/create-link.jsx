@@ -13,8 +13,12 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Input } from "./ui/input";
 import Error from "./error";
 import { Card } from "./ui/card";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as yup from "yup";
+import { QRCode } from "react-qrcode-logo";
+import useFetch from "@/hooks/use-fetch";
+import { createUrl } from "@/db/apiUrls";
+import { BeatLoader } from "react-spinners";
 
 const CreateLink = () => {
     const {user} = UrlState();
@@ -22,7 +26,9 @@ const CreateLink = () => {
     let [searchParams,setSearchParams]=useSearchParams();
     const longLink = searchParams.get("createNew");
 
-    const{errors,setErrors}=useState({});
+    const ref = useRef();
+
+    const[errors,setErrors]=useState({});
     const [formValues, setFormValues] = useState({
         title:"",
         longUrl: longLink || "",
@@ -32,7 +38,7 @@ const CreateLink = () => {
     const schema = yup.object().shape({
         title: yup.string().required("Title is required"),
         longUrl: yup.string().url("Must be a valid URL").required("Long URL is required"),
-        customUrl: yup.string().matches(/^[a-zA-Z0-9]+$/,"Custom URL should only contain alphanumeric characters"),
+        customUrl: yup.string(),
     });
 
     const handleChange =(e)=>{
@@ -41,6 +47,32 @@ const CreateLink = () => {
             [e.target.id]:e.target.value,
         })
     }
+
+    const { loading, error,data,fn: fnCreateUrl } = useFetch(
+      createUrl,
+      { ...formValues, user_id: user.id });
+
+    const createLink = async ()=>{
+        setErrors([]);
+        try {
+            await schema.validate(formValues,{abortEarly:false});
+            const canvas = ref.current.canvasRef.current;
+            const blob = await new Promise((resolve) => canvas.toBlob(resolve));
+            await fnCreateUrl(blob);
+        } catch (error) {
+            const newErrors={};
+            error.inner.forEach((e)=>newErrors[e.path]=e.message);
+            setErrors(newErrors);
+        }
+    }
+
+    useEffect(() => {
+        if(error==null && data){
+            navigate(`/link/${data[0].id}`);
+        }
+    }, [errors,data])
+    
+
   return (
       <Dialog defaultOpen={longLink} onOpenChange={(res)=>{if(!res) setSearchParams({})}}>
         <DialogTrigger>
@@ -53,13 +85,15 @@ const CreateLink = () => {
             </DialogTitle>
           </DialogHeader>
 
+          {formValues?.longUrl && (<QRCode value={formValues?.longUrl} size={200} ref={ref} className="items-center" />)}
+
           <Input
             id="title"
             placeholder="Short Url's Title"
             value={formValues.title}
             onChange={handleChange}
           />
-          <Error message={"some error"} />
+          {errors.title && <Error message={errors.title} />}
 
           <Input
             id="longUrl"
@@ -67,7 +101,7 @@ const CreateLink = () => {
             value={formValues.longUrl}
             onChange={handleChange}
           />
-          <Error message={"some error"} />
+           {errors.longUrl && <Error message={errors.longUrl} />}
 
           <div className="flex items-center gap-2">
             <Card className="p-2 w-3/4">url-shortner-vercel.com</Card>/
@@ -78,11 +112,11 @@ const CreateLink = () => {
               onChange={handleChange}
             />
           </div>
-          <Error message={"some error"} />
+          {error && <Error message={error.message} />}
           <DialogFooter className="sm:justify-start">
             <DialogClose asChild>
-              <Button type="button" variant="destructive">
-                Create
+              <Button type="button" variant="destructive" onClick={createLink} >
+                {loading ? <BeatLoader size={10} color="white"/> : "Create"}
               </Button>
             </DialogClose>
           </DialogFooter>

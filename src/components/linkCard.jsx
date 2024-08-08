@@ -22,10 +22,9 @@ const LinkCard = ({ url, fetchUrls }) => {
 
   const { loading: loadingDelete, fn: fnDelete } = useFetch(deleteUrl, url?.id);
 
-  // Handle URL deletion and update the list of URLs and clicks
   const handleDelete = async () => {
     await fnDelete();
-    await fetchUrls(); // Fetch the updated list of URLs and clicks
+    await fetchUrls();
   };
 
   return (
@@ -35,15 +34,15 @@ const LinkCard = ({ url, fetchUrls }) => {
         alt="QR"
         className="h-32 object-contain ring ring-blue-500 self-start"
       />
-      <Link to={`/link/${url.id}`} className="flex flex-col flex-1">
+      <Link to={`/link/${url.id}`} className="flex flex-col flex-1 min-w-0">
         <span className="text-3xl font-bold hover:underline cursor-pointer">
           {url.title}
         </span>
-        <span className="text-2xl text-blue-400 font-medium hover:underline cursor-pointer">
+        <span className="text-2xl text-blue-400 font-medium hover:underline cursor-pointer truncate">
           https://url-shortener.vercel.app/
           {url?.custom_url ? url?.custom_url : url?.short_url}
         </span>
-        <span className="flex items-center gap-1 hover:underline cursor-pointer">
+        <span className="flex items-center gap-1 hover:underline cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap">
           {url.original_url}
         </span>
         <span className="flex items-end text-gray-400 font-light text-sm flex-1">
@@ -68,10 +67,7 @@ const LinkCard = ({ url, fetchUrls }) => {
           <Download onClick={downloadImg} />
         </Button>
 
-        <Button
-          variant="ghost"
-          onClick={handleDelete} // Use the handleDelete function to manage deletion and refetch
-        >
+        <Button variant="ghost" onClick={handleDelete}>
           {loadingDelete ? <BeatLoader size={5} color="white" /> : <Trash />}
         </Button>
       </div>
