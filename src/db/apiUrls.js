@@ -1,4 +1,3 @@
-import UAParser from "ua-parser-js";
 import supabase, { supabaseUrl } from "./supabase";
 
 export const getUrls = async (user_id) => {
@@ -58,38 +57,40 @@ export const getLongUrl = async (id) => {
   const { data, error } = await supabase
     .from("urls")
     .select("id,original_url")
-    .or(`short_url.eq.${id}`, `custom_url.eq.${id}`).single();
+    .or(`short_url.eq.${id},custom_url.eq.${id}`)
+    .maybeSingle(); // Use maybeSingle instead of single
 
   if (error) {
     console.error(error.message);
-    throw new Error("Unable to Long URL");
+    throw new Error("Unable to fetch Long URL");
   }
+  if (!data) {
+    // Handle the case where no data is found
+    throw new Error("URL not found");
+  }
+
   return data;
 };
 
-const parser = new UAParser();
+export const getSingleUrl = async ({ id, user_id }) => {
+  const { data, error } = await supabase
+    .from("urls")
+    .select("*")
+    .eq("id", id)
+    .eq("user_id", user_id)
+    .maybeSingle(); // Use maybeSingle instead of single
 
-export const createClick = async ({id,original_url}) => {
-  try {
-    const res = await parser.getResult();
-    const device = res.device.type || "desktop";
-
-    const response = await fetch("https://ipapi.co/json/");
-    const {city,country_name : country} = await response.json();
-
-    await supabase.from("clicks").insert([
-      {
-        url_id: id,
-        device,
-        city,
-        country,
-      },
-    ]);
-
-    window.location.href = original_url;
-
-  } catch (error) {
+  if (error) {
     console.error(error.message);
-    throw new Error("Error creating Click");
+    throw new Error("Unable to fetch URL");
   }
-}
+  if (!data) {
+    // Handle the case where no data is found
+    throw new Error("URL not found");
+  }
+
+  return data;
+};
+
+
+

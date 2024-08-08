@@ -5,6 +5,7 @@ import { Copy, Download, Trash } from "lucide-react";
 import useFetch from "@/hooks/use-fetch";
 import { deleteUrl } from "@/db/apiUrls";
 import { BeatLoader } from "react-spinners";
+import DeleteLinkDialog from "./deleteLinkDialog";
 
 const LinkCard = ({ url, fetchUrls }) => {
   const downloadImg = async () => {
@@ -67,8 +68,8 @@ const LinkCard = ({ url, fetchUrls }) => {
           <Download onClick={downloadImg} />
         </Button>
 
-        <Button variant="ghost" onClick={handleDelete}>
-          {loadingDelete ? <BeatLoader size={5} color="white" /> : <Trash />}
+        <Button variant="ghost">
+          {loadingDelete ? <BeatLoader size={5} color="white" /> : <DeleteLinkDialog handleDelete={handleDelete} />}
         </Button>
       </div>
     </div>
