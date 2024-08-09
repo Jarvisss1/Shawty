@@ -27,7 +27,7 @@ const Auth = () => {
       <h1 className="text-5xl font-extrabold">
         {longlink ? "Hold Up lets Login First" : "Login / Sign Up"}
       </h1>
-      <Tabs defaultValue="Login" className="w-[400px] ">
+      <Tabs defaultValue="Login" className="min-w-[200px]">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="Login">Login</TabsTrigger>
           <TabsTrigger value="Signup">Sign Up</TabsTrigger>

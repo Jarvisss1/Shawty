@@ -107,7 +107,7 @@ const CreateLink = () => {
            {errors.longUrl && <Error message={errors.longUrl} />}
 
           <div className="flex items-center gap-2">
-            <Card className="p-2 w-11/12">{result}</Card>/
+            <Card className="p-2 w-19/12">{result}</Card>/
             <Input
               id="customUrl"
               placeholder="Custom Url (optional)"

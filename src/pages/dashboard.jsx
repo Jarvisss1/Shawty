@@ -13,7 +13,6 @@ import { getUrls } from "@/db/apiUrls";
 import { getClicksForUrls } from "@/db/apiClicks";
 import { UrlState } from "@/context";
 import LinkCard from "@/components/linkCard";
-import { Button } from "@/components/ui/button";
 import CreateLink from "@/components/create-link";
 
 const Dashboard = () => {
@@ -60,13 +59,13 @@ const Dashboard = () => {
             <CardTitle>Total Clicks</CardTitle>
           </CardHeader>
           <CardContent>
-            <p>{clicks?.length}</p>
+            <p>{clicks?.length || 0 }</p>
           </CardContent>
         </Card>
       </div>
       <div className="flex justify-between">
         <h1 className="text-4xl font-extrabold">My Links</h1>
-        <CreateLink/>
+        <CreateLink className="w-4/5"/>
       </div>
       <div className="relative">
         <Input
