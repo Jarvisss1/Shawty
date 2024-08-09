@@ -1,5 +1,4 @@
 import { Pie, PieChart } from "recharts";
-
 import {
   Card,
   CardContent,
@@ -16,7 +15,7 @@ import {
 export function DeviceStats({ statsData }) {
   // Aggregate device counts
   const deviceCounts = statsData.reduce((acc, { device }) => {
-    acc[device] = (acc[device] || 0) + 1;
+    acc[device.toLowerCase()] = (acc[device.toLowerCase()] || 0) + 1;
     return acc;
   }, {});
 
@@ -27,7 +26,7 @@ export function DeviceStats({ statsData }) {
     fill:
       device === "desktop"
         ? "var(--color-desktop)"
-        : device === "Mobile"
+        : device === "mobile"
         ? "var(--color-mobile)"
         : "var(--color-other)", // default color for other device types
   }));
@@ -56,7 +55,7 @@ export function DeviceStats({ statsData }) {
       <CardContent className="flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square max-h-[300px]"
+          className="mx-auto aspect-video max-h-[300px]"
         >
           <PieChart>
             <ChartTooltip
@@ -86,7 +85,6 @@ export function DeviceStats({ statsData }) {
           </PieChart>
         </ChartContainer>
       </CardContent>
-     
     </Card>
   );
 }

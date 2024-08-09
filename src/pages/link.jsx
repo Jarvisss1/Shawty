@@ -88,7 +88,7 @@ const Link = () => {
             target="_blank"
             className="text-3xl text-ellipsis sm:text-4xl text-blue-400 font-bold hover:underline cursor-pointer"
           >
-            https://url-shortner-vercel.com/{link}
+            {`${import.meta.env.VITE_REDIRECT_URL}/${link}`}
           </a>
 
           <a

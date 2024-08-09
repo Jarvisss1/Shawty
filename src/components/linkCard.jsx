@@ -40,7 +40,7 @@ const LinkCard = ({ url, fetchUrls }) => {
           {url.title}
         </span>
         <span className="text-2xl text-blue-400 font-medium hover:underline cursor-pointer truncate">
-          https://url-shortener.vercel.app/
+          {import.meta.env.VITE_REDIRECT_URL}/
           {url?.custom_url ? url?.custom_url : url?.short_url}
         </span>
         <span className="flex items-center gap-1 hover:underline cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap">
@@ -56,7 +56,7 @@ const LinkCard = ({ url, fetchUrls }) => {
           <Copy
             onClick={() => {
               navigator.clipboard.writeText(
-                `https://url-shortener.vercel.app/${
+                `${import.meta.env.VITE_REDIRECT_URL}/${
                   url?.custom_url ? url?.custom_url : url?.short_url
                 }`
               );

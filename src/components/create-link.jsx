@@ -25,6 +25,9 @@ const CreateLink = () => {
     const navigate = useNavigate();
     let [searchParams,setSearchParams]=useSearchParams();
     const longLink = searchParams.get("createNew");
+    const redirectLink = import.meta.env.VITE_REDIRECT_URL;
+    let result = redirectLink.replace("https://", "");
+
 
     const ref = useRef();
 
@@ -104,7 +107,7 @@ const CreateLink = () => {
            {errors.longUrl && <Error message={errors.longUrl} />}
 
           <div className="flex items-center gap-2">
-            <Card className="p-2 w-3/4">url-shortner-vercel.com</Card>/
+            <Card className="p-2 w-11/12">{result}</Card>/
             <Input
               id="customUrl"
               placeholder="Custom Url (optional)"

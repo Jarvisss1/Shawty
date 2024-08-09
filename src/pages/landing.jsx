@@ -17,7 +17,7 @@ const Landing = () => {
       <h2 className="my-10 sm:my-16 text-3xl sm:text-6xl lg:text-7xl text-white text-center font-extrabold">
         Wanna make a Shorter Link?
         <br />
-        Try Shawty Now!
+        Try <span style={{ color: "#36d7b7" }}>Shawtyy</span> Now!
       </h2>
       <form
         action=""
