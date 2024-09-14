@@ -14,7 +14,7 @@ const AppLayout = () => {
       </main>
 
         <div className=' mt-10 text-center bg-gray-800 p-10'>
-          made by jarvisss1
+          Shawtyy: Create short, custom URLs with detailed analytics. © 2024
         </div>
     </div>
   )
