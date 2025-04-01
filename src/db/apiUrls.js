@@ -1,7 +1,10 @@
-import supabase, { supabaseUrl } from "./supabase";
+import { supabase, supabaseUrl } from "./supabase";
 
 export const getUrls = async (user_id) => {
-  const { data, error } = await supabase.from("urls").select("*").eq("user_id",user_id);
+  const { data, error } = await supabase
+    .from("urls")
+    .select("*")
+    .eq("user_id", user_id);
 
   if (error) {
     console.error(error.message);
@@ -11,10 +14,7 @@ export const getUrls = async (user_id) => {
 };
 
 export const deleteUrl = async (id) => {
-  const { data, error } = await supabase
-    .from("urls")
-    .delete()
-    .eq("id", id);
+  const { data, error } = await supabase.from("urls").delete().eq("id", id);
 
   if (error) {
     console.error(error.message);
@@ -23,8 +23,11 @@ export const deleteUrl = async (id) => {
   return data;
 };
 
-export const createUrl = async ({title,longUrl,customUrl,user_id},qr_code) => {
-  const short_url = Math.random().toString(36).substring(2,6);
+export const createUrl = async (
+  { title, longUrl, customUrl, user_id },
+  qr_code
+) => {
+  const short_url = Math.random().toString(36).substring(2, 6);
   const fileName = `qr-${short_url}`;
 
   const { error: storageError } = await supabase.storage
@@ -35,20 +38,23 @@ export const createUrl = async ({title,longUrl,customUrl,user_id},qr_code) => {
 
   const qr = `${supabaseUrl}/storage/v1/object/public/qrs/${fileName}`;
 
-  const { data, error } = await supabase.from("urls").insert([
-    {
-      title,
-      original_url: longUrl,
-      custom_url: customUrl || null,
-      user_id,
-      short_url,
-      qr,
-    },
-  ]).select();
+  const { data, error } = await supabase
+    .from("urls")
+    .insert([
+      {
+        title,
+        original_url: longUrl,
+        custom_url: customUrl || null,
+        user_id,
+        short_url,
+        qr,
+      },
+    ])
+    .select();
 
   if (error) {
     console.error(error.message);
-    throw new Error("Error creating URL");  
+    throw new Error("Error creating URL");
   }
   return data;
 };
@@ -91,6 +97,3 @@ export const getSingleUrl = async ({ id, user_id }) => {
 
   return data;
 };
-
-
-

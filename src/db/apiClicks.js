@@ -1,5 +1,5 @@
 import { UAParser } from "ua-parser-js";
-import supabase from "./supabase";
+import {supabase} from "./supabase";
 export const getClicksForUrls = async (url_id) => {
   const { data, error } = await supabase
     .from("clicks")

@@ -1,4 +1,4 @@
-import supabase, { supabaseUrl } from "./supabase";
+import { supabase, supabaseUrl } from "./supabase";
 
 export const login = async ({ email, password }) => {
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -14,7 +14,7 @@ export const signUp = async ({ name, email, password, profile_pic }) => {
   const fileName = `dp-${name.split(" ").join("-")}-${Date.now()}`;
 
   const { error: storageError } = await supabase.storage
-    .from("profile_pic")
+    .from("profile-pic")
     .upload(fileName, profile_pic);
 
   if (storageError) throw new Error(storageError.message);
@@ -25,7 +25,7 @@ export const signUp = async ({ name, email, password, profile_pic }) => {
     options: {
       data: {
         name,
-        profile_pic: `${supabaseUrl}/storage/v1/object/public/profile_pic/${fileName}`,
+        profile_pic: `${supabaseUrl}/storage/v1/object/public/profile-pic/${fileName}`,
       },
     },
   });
@@ -44,7 +44,7 @@ export const getCurrentUser = async () => {
 };
 
 export const logout = async () => {
-    const { error } = await supabase.auth.signOut();
-    
-    if (error) throw new Error(error.message);
-}
+  const { error } = await supabase.auth.signOut();
+
+  if (error) throw new Error(error.message);
+};
